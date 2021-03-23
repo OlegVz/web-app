@@ -1,5 +1,7 @@
 package app.servlets;
 
+import app.controller.DBWorker;
+import app.controller.UserController;
 import app.entities.User;
 import app.model.Model;
 import jakarta.servlet.RequestDispatcher;
@@ -24,10 +26,14 @@ public class CreateNewUserServlet extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        User user = new User(email, password);
+        DBWorker dbWorker = new DBWorker();
+        UserController userController = new UserController();
 
-        Model model = Model.getInstance();
-        model.add(user);
+        userController.createUser(email, password, dbWorker.getConnection());
+//        User user = new User(email, password);
+//
+//        Model model = Model.getInstance();
+//        model.add(user);
 
         req.setAttribute("userEmail", email);
         doGet(req, resp);
