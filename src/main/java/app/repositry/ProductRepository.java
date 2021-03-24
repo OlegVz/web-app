@@ -1,6 +1,7 @@
 package app.repositry;
 
-import app.entities.User;
+import app.entities.Product;
+import app.entities.ProductStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,19 +9,20 @@ import java.util.List;
 
 import static app.repositry.DBConstants.*;
 
-public class UserRepository {
-    public UserRepository() {
+public class ProductRepository {
+    public ProductRepository() {
         try {
             Class.forName(JDBC_DRIVER);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        String sql = "CREATE TABLE IF NOT EXISTS users\n" +
-                "(\n" +
+        String sql = "CREATE TABLE IF NOT EXISTS product (\n" +
                 "    id          BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
-                "    user_email        VARCHAR(254),\n" +
-                "    password     VARCHAR(23)\n" +
+                "    product_name VARCHAR(50),\n" +
+                "    price          BIGINT,\n" +
+                "    product_status VARCHAR(50),\n" +
+                "    created_at DATETIME\n" +
                 ");";
         try (
                 Connection connection = getConnection();
@@ -36,23 +38,22 @@ public class UserRepository {
         return DriverManager.getConnection(DB_URL, USER, PASSWORD);
     }
 
-    public User save(String email, String password) {
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(password);
+    public Product save(Product product) {
         try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
-                    "insert into users (user_email, password)" +
-                            "VALUES (?, ?); ",
+                    "INSERT INTO product (product_name, price, product_status, created_at)\n" +
+                            "VALUES (?, ?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS
             );
-            ps.setString(1, email);
-            ps.setString(2, password);
+            ps.setString(1, product.getName());
+            ps.setLong(2, product.getPrice());
+            ps.setString(3, product.getProductStatus().toString());
+            ps.setString(4, product.getCreatedAt().toString());
 
             if (ps.executeUpdate() > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
-                        user.setId(rs.getLong(1));
+                        product.setId(rs.getLong(1));
                     }
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -62,18 +63,17 @@ public class UserRepository {
             e.printStackTrace();
         }
 
-
-        return user;
+        return product;
     }
 
-    public User deleteUserById(Long id) {
-        String sql = "delete from users where id = ?";
+    public Product deleteProductById(Long id) {
+        String sql = "delete from product where id = ?";
         try (
                 Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
             ps.setLong(1, id);
-            User byID = findByID(id);
+            Product byID = findByID(id);
             if (ps.executeUpdate() == 1) {
                 return byID;
             }
@@ -84,8 +84,8 @@ public class UserRepository {
         return null;
     }
 
-    public User findByID(Long id) {
-        String sql = "select * from users where id = ?";
+    public Product findByID(Long id) {
+        String sql = "select * from product where id = ?";
         try (
                 Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
@@ -102,8 +102,8 @@ public class UserRepository {
         return null;
     }
 
-    public List<User> list() {
-        String sql = "select * from users ";
+    public List<Product> list() {
+        String sql = "select * from product ";
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -116,22 +116,25 @@ public class UserRepository {
         }
     }
 
-    private List<User> rsToEntityList(ResultSet rs) throws SQLException {
-        List<User> students = new ArrayList<>();
+    private List<Product> rsToEntityList(ResultSet rs) throws SQLException {
+        List<Product> products = new ArrayList<>();
         while (rs.next()) {
-            User user = rsToEntity(rs);
-            students.add(user);
+            Product product = rsToEntity(rs);
+            products.add(product);
         }
 
-        return students;
+        return products;
     }
 
-    private User rsToEntity(ResultSet rs) throws SQLException {
-        User user = new User();
+    private Product rsToEntity(ResultSet rs) throws SQLException {
+        Product product = new Product();
 
-        user.setId(rs.getLong(1));
-        user.setEmail(rs.getString(2));
+        product.setId(rs.getLong(1));
+        product.setName(rs.getString(2));
+        product.setPrice(rs.getLong(3));
+        product.setProductStatus(ProductStatus.valueOf(rs.getString(4)));
+        product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
 
-        return user;
+        return product;
     }
 }

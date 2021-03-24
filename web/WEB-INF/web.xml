@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
-
+<!--user-->
     <servlet>
         <servlet-name>createNewUserServlet</servlet-name>
         <servlet-class>app.servlets.userServlets.CreateNewUserServlet</servlet-class>
@@ -29,6 +29,34 @@
     <servlet-mapping>
         <servlet-name>deleteUserByIdServlet</servlet-name>
         <url-pattern>/delete-user</url-pattern>
+    </servlet-mapping>
+
+<!--    product-->
+    <servlet>
+        <servlet-name>createNewProductServlet</servlet-name>
+        <servlet-class>app.servlets.productServlets.CreateNewProductServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createNewProductServlet</servlet-name>
+        <url-pattern>/add-new-product</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>listAllProductsServlet</servlet-name>
+        <servlet-class>app.servlets.productServlets.ListAllProductsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>listAllProductsServlet</servlet-name>
+        <url-pattern>/list-products</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deleteProductById</servlet-name>
+        <servlet-class>app.servlets.productServlets.DeleteProductById</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteProductById</servlet-name>
+        <url-pattern>/delete-product</url-pattern>
     </servlet-mapping>
 
 </web-app>

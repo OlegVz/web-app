@@ -11,9 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DeleteUserByIdServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/deleteUser.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/userViews/deleteUser.jsp");
         requestDispatcher.forward(req, resp);
     }
 

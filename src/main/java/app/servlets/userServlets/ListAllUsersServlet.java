@@ -19,7 +19,7 @@ public class ListAllUsersServlet extends HttpServlet {
         List<User> users = userRepository.list();
         req.setAttribute("userList", users);
 
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/userList.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/userViews/userList.jsp");
         requestDispatcher.forward(req, resp);
     }
 }

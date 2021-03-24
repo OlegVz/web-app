@@ -1,7 +1,7 @@
-package app.servlets.userServlets;
+package app.servlets.productServlets;
 
-import app.entities.User;
-import app.repositry.UserRepository;
+import app.entities.Product;
+import app.repositry.ProductRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,23 +10,22 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class CreateNewUserServlet extends HttpServlet {
+public class DeleteProductById extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/userViews/addUser.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/productViews/deleteProduct.jsp");
         requestDispatcher.forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
+        Long id = Long.parseLong(req.getParameter("id"));
 
-        UserRepository userRepository = new UserRepository();
-        User save = userRepository.save(email, password);
+        ProductRepository productRepository = new ProductRepository();
+        Product product = productRepository.deleteProductById(id);
 
-        req.setAttribute("userEmail", save.getEmail());
+        req.setAttribute("deletedProduct", product.getName());
         doGet(req, resp);
     }
 }
