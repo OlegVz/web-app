@@ -10,6 +10,7 @@ import java.util.List;
 import static app.repositry.DBConstants.*;
 
 public class ProductRepository {
+
     public ProductRepository() {
         try {
             Class.forName(JDBC_DRIVER);

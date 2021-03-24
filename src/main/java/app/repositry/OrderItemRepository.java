@@ -1,6 +1,6 @@
 package app.repositry;
 
-import app.entities.User;
+import app.entities.OrderItem;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,20 +8,21 @@ import java.util.List;
 
 import static app.repositry.DBConstants.*;
 
-public class UserRepository {
-
-    public UserRepository() {
+public class OrderItemRepository {
+    public OrderItemRepository() {
         try {
             Class.forName(JDBC_DRIVER);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        String sql = "CREATE TABLE IF NOT EXISTS users\n" +
-                "(\n" +
-                "    id          BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
-                "    user_email        VARCHAR(254),\n" +
-                "    password     VARCHAR(23)\n" +
+        String sql = "CREATE TABLE IF NOT EXISTS order_items(\n" +
+                "  product_id BIGINT,\n" +
+                "  order_id BIGINT,\n" +
+                "  quantity BIGINT,\n" +
+                "  PRIMARY KEY (product_id, order_id),\n" +
+                "  FOREIGN KEY (product_id) REFERENCES product(id),\n" +
+                "  FOREIGN KEY (order_id) REFERENCES orders(id)\n" +
                 ");";
         try (
                 Connection connection = getConnection();
@@ -37,43 +38,38 @@ public class UserRepository {
         return DriverManager.getConnection(DB_URL, USER, PASSWORD);
     }
 
-    public User save(String email, String password) {
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(password);
+    public OrderItem save(OrderItem orderItem) {
         try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
-                    "insert into users (user_email, password)" +
-                            "VALUES (?, ?); ",
+                    "INSERT INTO order_items (product_id, order_id, quantity)\n" +
+                            "VALUES (?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS
             );
-            ps.setString(1, email);
-            ps.setString(2, password);
-
+            ps.setLong(1, orderItem.getProductId());
+            ps.setLong(2, orderItem.getOrderId());
+            ps.setInt(3, orderItem.getQuantity());
             if (ps.executeUpdate() > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        user.setId(rs.getLong(1));
-                    }
-                } catch (SQLException ex) {
-                    System.out.println(ex.getMessage());
-                }
+                return orderItem;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return user;
+        return null;
     }
 
-    public User deleteUserById(Long id) {
-        String sql = "delete from users where id = ?";
+    public OrderItem deleteOrderItemById(Long productId, Long orderId) {
+        String sql = "DELETE\n" +
+                "FROM order_items\n" +
+                "WHERE order_id = ?\n" +
+                "  AND product_id = ?;";
         try (
                 Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
-            ps.setLong(1, id);
-            User byID = findByID(id);
+            ps.setLong(1, orderId);
+            ps.setLong(2, productId);
+            OrderItem byID = findByID(productId, orderId);
             if (ps.executeUpdate() == 1) {
                 return byID;
             }
@@ -84,13 +80,17 @@ public class UserRepository {
         return null;
     }
 
-    public User findByID(Long id) {
-        String sql = "select * from users where id = ?";
+    public OrderItem findByID(Long productId, Long orderId) {
+        String sql = "SELECT *\n" +
+                "FROM order_items\n" +
+                "WHERE product_id = ?\n" +
+                "  AND order_id = ?;";
         try (
                 Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
-            ps.setLong(1, id);
+            ps.setLong(1, productId);
+            ps.setLong(2, orderId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rsToEntity(rs);
@@ -102,8 +102,8 @@ public class UserRepository {
         return null;
     }
 
-    public List<User> list() {
-        String sql = "select * from users ";
+    public List<OrderItem> list() {
+        String sql = "select * from order_items ";
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -116,21 +116,23 @@ public class UserRepository {
         }
     }
 
-    private List<User> rsToEntityList(ResultSet rs) throws SQLException {
-        List<User> users = new ArrayList<>();
+    private List<OrderItem> rsToEntityList(ResultSet rs) throws SQLException {
+        List<OrderItem> orderItems = new ArrayList<>();
         while (rs.next()) {
-            User user = rsToEntity(rs);
-            users.add(user);
+            OrderItem orderItem = rsToEntity(rs);
+            orderItems.add(orderItem);
         }
 
-        return users;
+        return orderItems;
     }
 
-    private User rsToEntity(ResultSet rs) throws SQLException {
-        User user = new User();
-        user.setId(rs.getLong(1));
-        user.setEmail(rs.getString(2));
+    private OrderItem rsToEntity(ResultSet rs) throws SQLException {
+        OrderItem orderItem = new OrderItem();
 
-        return user;
+        orderItem.setProductId(rs.getLong(1));
+        orderItem.setOrderId(rs.getLong(2));
+        orderItem.setQuantity(rs.getInt(3));
+
+        return orderItem;
     }
 }

@@ -20,7 +20,7 @@ public class DeleteProductById extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id"));
+        long id = Long.parseLong(req.getParameter("id"));
 
         ProductRepository productRepository = new ProductRepository();
         Product product = productRepository.deleteProductById(id);

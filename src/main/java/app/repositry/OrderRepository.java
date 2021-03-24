@@ -1,6 +1,6 @@
 package app.repositry;
 
-import app.entities.User;
+import app.entities.Order;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,20 +8,23 @@ import java.util.List;
 
 import static app.repositry.DBConstants.*;
 
-public class UserRepository {
+public class OrderRepository {
 
-    public UserRepository() {
+    public OrderRepository() {
         try {
             Class.forName(JDBC_DRIVER);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        String sql = "CREATE TABLE IF NOT EXISTS users\n" +
+        String sql = "CREATE TABLE IF NOT EXISTS orders\n" +
                 "(\n" +
-                "    id          BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
-                "    user_email        VARCHAR(254),\n" +
-                "    password     VARCHAR(23)\n" +
+                "    id         BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
+                "    user_id    BIGINT,\n" +
+                "    status     VARCHAR(50),\n" +
+                "    created_at VARCHAR(50),\n" +
+                "    FOREIGN KEY (user_id) REFERENCES users (id)\n" +
+                "\n" +
                 ");";
         try (
                 Connection connection = getConnection();
@@ -37,23 +40,21 @@ public class UserRepository {
         return DriverManager.getConnection(DB_URL, USER, PASSWORD);
     }
 
-    public User save(String email, String password) {
-        User user = new User();
-        user.setEmail(email);
-        user.setPassword(password);
+    public Order save(Order order) {
         try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
-                    "insert into users (user_email, password)" +
-                            "VALUES (?, ?); ",
+                    "INSERT INTO orders (user_id, status, created_at)\n" +
+                            "VALUES (?, ?, ?);",
                     Statement.RETURN_GENERATED_KEYS
             );
-            ps.setString(1, email);
-            ps.setString(2, password);
+            ps.setLong(1, order.getUserId());
+            ps.setString(2, order.getStatus());
+            ps.setString(3, order.getCreatedAt());
 
             if (ps.executeUpdate() > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
-                        user.setId(rs.getLong(1));
+                        order.setId(rs.getLong(1));
                     }
                 } catch (SQLException ex) {
                     System.out.println(ex.getMessage());
@@ -63,17 +64,18 @@ public class UserRepository {
             e.printStackTrace();
         }
 
-        return user;
+
+        return order;
     }
 
-    public User deleteUserById(Long id) {
-        String sql = "delete from users where id = ?";
+    public Order deleteOrderById(Long id) {
+        String sql = "delete from orders where id = ?";
         try (
                 Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
             ps.setLong(1, id);
-            User byID = findByID(id);
+            Order byID = findByID(id);
             if (ps.executeUpdate() == 1) {
                 return byID;
             }
@@ -84,8 +86,8 @@ public class UserRepository {
         return null;
     }
 
-    public User findByID(Long id) {
-        String sql = "select * from users where id = ?";
+    public Order findByID(Long id) {
+        String sql = "select * from orders where id = ?";
         try (
                 Connection connection = getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql)
@@ -102,8 +104,8 @@ public class UserRepository {
         return null;
     }
 
-    public List<User> list() {
-        String sql = "select * from users ";
+    public List<Order> list() {
+        String sql = "select * from orders ";
         try (
                 Connection connection = getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -116,21 +118,24 @@ public class UserRepository {
         }
     }
 
-    private List<User> rsToEntityList(ResultSet rs) throws SQLException {
-        List<User> users = new ArrayList<>();
+    private List<Order> rsToEntityList(ResultSet rs) throws SQLException {
+        List<Order> orders = new ArrayList<>();
         while (rs.next()) {
-            User user = rsToEntity(rs);
-            users.add(user);
+            Order order = rsToEntity(rs);
+            orders.add(order);
         }
 
-        return users;
+        return orders;
     }
 
-    private User rsToEntity(ResultSet rs) throws SQLException {
-        User user = new User();
-        user.setId(rs.getLong(1));
-        user.setEmail(rs.getString(2));
+    private Order rsToEntity(ResultSet rs) throws SQLException {
+        Order order = new Order();
 
-        return user;
+        order.setId(rs.getLong(1));
+        order.setUserId(rs.getLong(2));
+        order.setStatus(rs.getString(3));
+        order.setCreatedAt(rs.getString(3));
+
+        return order;
     }
 }

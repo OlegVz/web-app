@@ -1,7 +1,7 @@
-package app.servlets.userServlets;
+package app.servlets.orderServlets;
 
-import app.entities.User;
-import app.repositry.UserRepository;
+import app.entities.Order;
+import app.repositry.OrderRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,11 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class DeleteUserByIdServlet extends HttpServlet {
+public class DeleteOrderByIdServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/userViews/deleteUser.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/orderServlets/deleteOrder.jsp");
         requestDispatcher.forward(req, resp);
     }
 
@@ -22,10 +22,10 @@ public class DeleteUserByIdServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long id = Long.parseLong(req.getParameter("id"));
 
-        UserRepository userRepository = new UserRepository();
-        User user = userRepository.deleteUserById(id);
+        OrderRepository orderRepository = new OrderRepository();
+        Order order = orderRepository.deleteOrderById(id);
 
-        req.setAttribute("deletedUser", user.getEmail());
+        req.setAttribute("deletedOrder", order);
         doGet(req, resp);
     }
 }

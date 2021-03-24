@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Product {
+
     private Long id;
     private String name;
     private Long price;

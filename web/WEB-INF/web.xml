@@ -59,4 +59,59 @@
         <url-pattern>/delete-product</url-pattern>
     </servlet-mapping>
 
+    <!--    order-->
+    <servlet>
+        <servlet-name>createNewOrderServlet</servlet-name>
+        <servlet-class>app.servlets.orderServlets.CreateNewOrderServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createNewOrderServlet</servlet-name>
+        <url-pattern>/add-new-order</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>listAllOrdersServlet</servlet-name>
+        <servlet-class>app.servlets.orderServlets.ListAllOrdersServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>listAllOrdersServlet</servlet-name>
+        <url-pattern>/list-orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deleteOrderByIdServlet</servlet-name>
+        <servlet-class>app.servlets.orderServlets.DeleteOrderByIdServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteOrderByIdServlet</servlet-name>
+        <url-pattern>/delete-order</url-pattern>
+    </servlet-mapping>
+
+<!--    orderItem-->
+    <servlet>
+        <servlet-name>createNewOrderItemServlet</servlet-name>
+        <servlet-class>app.servlets.orderItemServlets.CreateNewOrderItemServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createNewOrderItemServlet</servlet-name>
+        <url-pattern>/add-new-orderItem</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>listAllOrderItemsServlet</servlet-name>
+        <servlet-class>app.servlets.orderItemServlets.ListAllOrderItemsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>listAllOrderItemsServlet</servlet-name>
+        <url-pattern>/list-orderItems</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deleteOrderItemById</servlet-name>
+        <servlet-class>app.servlets.orderItemServlets.DeleteOrderItemById</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteOrderItemById</servlet-name>
+        <url-pattern>/delete-orderItem</url-pattern>
+    </servlet-mapping>
 </web-app>

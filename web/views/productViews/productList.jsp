@@ -3,11 +3,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Users list</title>
+    <title>Products list</title>
 </head>
 <body>
 <h1>Shop web app!</h1>
-<h2>Users list</h2>
+<h2>Products list</h2>
 <%
     List<Product> productList = (List<Product>) request.getAttribute("productList");
 

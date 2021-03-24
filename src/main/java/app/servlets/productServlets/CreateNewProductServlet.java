@@ -23,7 +23,7 @@ public class CreateNewProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
-        Long price = Long.parseLong(req.getParameter("price"));
+        long price = Long.parseLong(req.getParameter("price"));
         String productStatus = req.getParameter("productStatus");
 
         Product product = new Product();
