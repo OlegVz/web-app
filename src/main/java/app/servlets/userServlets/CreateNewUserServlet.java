@@ -1,9 +1,7 @@
-package app.servlets;
+package app.servlets.userServlets;
 
-import app.controller.DBWorker;
-import app.controller.UserController;
 import app.entities.User;
-import app.model.Model;
+import app.repositry.UserRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,13 +9,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class CreateNewUserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/add.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/addUser.jsp");
         requestDispatcher.forward(req, resp);
     }
 
@@ -26,16 +23,10 @@ public class CreateNewUserServlet extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        DBWorker dbWorker = new DBWorker();
-        UserController userController = new UserController();
+        UserRepository userRepository = new UserRepository();
+        User save = userRepository.save(email, password);
 
-        userController.createUser(email, password, dbWorker.getConnection());
-//        User user = new User(email, password);
-//
-//        Model model = Model.getInstance();
-//        model.add(user);
-
-        req.setAttribute("userEmail", email);
+        req.setAttribute("userEmail", save.getEmail());
         doGet(req, resp);
     }
 }

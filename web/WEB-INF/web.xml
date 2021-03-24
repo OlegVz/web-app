@@ -6,7 +6,7 @@
 
     <servlet>
         <servlet-name>createNewUserServlet</servlet-name>
-        <servlet-class>app.servlets.CreateNewUserServlet</servlet-class>
+        <servlet-class>app.servlets.userServlets.CreateNewUserServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>createNewUserServlet</servlet-name>
@@ -15,10 +15,20 @@
 
     <servlet>
         <servlet-name>listAllUsersServlet</servlet-name>
-        <servlet-class>app.servlets.ListAllUsersServlet</servlet-class>
+        <servlet-class>app.servlets.userServlets.ListAllUsersServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>listAllUsersServlet</servlet-name>
         <url-pattern>/list-users</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deleteUserByIdServlet</servlet-name>
+        <servlet-class>app.servlets.userServlets.DeleteUserByIdServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteUserByIdServlet</servlet-name>
+        <url-pattern>/delete-user</url-pattern>
+    </servlet-mapping>
+
 </web-app>
